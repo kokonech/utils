@@ -72,10 +72,11 @@ def mapLine(l,d,cChanged,sep,ifNotMapping="keepOriginal",fileNotMapped=None):
     parts = [p.replace("\n","") for p in l.split(sep)]
     #print l
     #print parts[cChanged-1]
-    #raw_input(
+    #raw_input()
     #print d[parts[cChanged-1]]
     #print all([i.isspace() for i in d[parts[cChanged-1]]])
     #print all([len(i) == 0 for i in d[parts[cChanged-1]]])
+    #raw_input()
     if d.has_key(parts[cChanged-1]) and not all([i.isspace() for i in d[parts[cChanged-1]]]) and not all([len(i) == 0 for i in d[parts[cChanged-1]]]):
         #print parts[cChanged-1], d[parts[cChanged-1]]
         #raw_input()
