@@ -39,12 +39,13 @@ def dicFromFile(fileName,cKey,cMapped,sep,ifDup="replicate"):
         l = f.readline()
         while l:
             parts = [p.replace("\n","") for p in l.split(sep)]
+            #print parts
             if not d.has_key(parts[cKey-1]): d[parts[cKey-1]] = [parts[cMapped-1]]
             else: d[parts[cKey-1]].append(parts[cMapped-1])
             l = f.readline()
-    
+   
     for k in d:
-        if ifDup == "replicate": 
+        if ifDup == "replicate":
             pass # Keep all the mapping possibilities
         elif ifDup == "keepFirst": 
             d[k] = [d[k][0]] # Keep the first one
@@ -144,6 +145,8 @@ def main():
             else:
                 mapped += 1
                 for newLine in newLines:
+                    #print newLine
+                    #raw_input()
                     totalMappings += 1
                     fileOut.write("%s\n"%newLine)
 
