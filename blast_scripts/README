@@ -1,0 +1,22 @@
+1) LocalBlastAnalyze.py uses local blast to analyze a list of queries with high similarity
+
+Fist make sure you have blast+ installed.
+
+Then check your database in folder chicken_transcripts:
+
+blastdbcmd -list .
+
+./chicken_genes.fa Nucleotide
+
+Make sure that your database in blast search path:
+Run this command when in chicken_transcripts folder
+export BLASTDB=`pwd`
+
+Check again by running this command from your home:
+
+blastdbcmd -show_blastdb_search_path
+
+Now you can use localBlastAnalalyze.py
+
+python localBlastAnalysis.py chicken.csv chicken_genes.fa
+
