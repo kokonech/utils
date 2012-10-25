@@ -60,6 +60,9 @@ def main():
     parser.add_argument("-o", "--fileOut", dest="o", type=argparse.FileType("w"), default="-",help="Output file. If not used output will be stdout. Default \"-\" (stdout)", metavar="FILE")
     parser.add_argument("-d", "--fileDiscarded", dest="d", type=argparse.FileType("w"), default=None,help="File to save the probes with no hit that fulfils the QC requirements. If not used they are ignored", metavar="FILE")
     parser.add_argument("-c", "--fileControversial", dest="c", type=argparse.FileType("w"), default=None,help="File to save the probes that have two or more good hits for different genes. If not used they are ignored", metavar="FILE")
+    parser.add_argument("-p", "--percOverlap", dest="percOverlap", type=float, default=95.0,help="Minimum percentage of overlap between the probe and the transcript (default=95.0)", metavar="PERCENTAGE")
+    parser.add_argument("--posProbeID", dest="posProbeID", type=int, default=1,help="Position where the unique ID for the probes in the array can be found. For example in \"ITGB3BP|ENST00000283568|A_23_P23765|3966238\" 3 or 4 could be used (default 1)", metavar="INT")
+    parser.add_argument("-b", "--bpOverlap", dest="bpOverlap", type=float, default=55,help="Minimum base pair overlap between the probe and the transcript (default=55)", metavar="PERCENTAGE")
     parser.add_argument('--infoOrig', metavar='INT', type=int, nargs='+', default=[1],help="List with the positions of the additional information from the probe annotation one wants to output (found in the first field) (1 is the first position)")
     parser.add_argument('--infoBlasted', metavar='INT', type=int, nargs='+', default=[1,2,3], help="List with the positions of the additional information from the BLAST annotation one wants to output (found in the second field) (1 is the first position)")
 
@@ -73,7 +76,7 @@ def main():
     curBestHit = None
     l = args.fileIn.readline()
     while l:
-        r = RowBlast(l,infoOrig=args.infoOrig,infoBlasted=args.infoBlasted)
+        r = RowBlast(l,posProbeID=args.posProbeID,infoOrig=args.infoOrig,infoBlasted=args.infoBlasted)
         #print l.strip()
         #print r
         if not curProbeID: # if it is the FIRST probe
@@ -100,7 +103,7 @@ def main():
             curBestHit = None # To store the best hit and compare the other hits with them
             curControversial = [] # To store de hits with good hits to different genes
         #print curProbeID, curBestHit, "|".join([str(c) for c in curControversial])
-        if r.passQC(): # Do not work wih reads that do not fulfil the QC requirements
+        if r.passQC(percOverlap=args.percOverlap,bpOverlap=args.bpOverlap): # Skip reads that do not fulfil the QC requirements
             #print "Yes QC"
             if curProbeID == r.probeID: # if we find hits from the SAME probe
                 #print "hits from the SAME probe"
@@ -127,6 +130,22 @@ def main():
 
 
         l = args.fileIn.readline()
+
+    # For the last probe
+    if not curBestHit: # There was no hit that passed the QC
+        numDiscardedProbes += 1
+        if args.d: # If we want to store them
+            args.d.write("%s\n"%(curProbeID))
+
+    elif len(curControversial) == 0: # The probe has a single gene as a hit
+        numSingleGeneHits +=1
+        curBestHit.toFile(args.o)
+
+    elif args.c: # There are controversial hits for the same probe and we want to store them
+        numControversialProbes += 1
+        for c in curControversial:
+            c.toFile(args.c)
+
 
     if args.verbose:
         print "Discarded probes: %d"%(numDiscardedProbes)
