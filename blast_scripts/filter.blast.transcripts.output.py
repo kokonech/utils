@@ -34,11 +34,17 @@ class RowBlast:
 
         parts = [p for p in l.strip().split()]
         #print parts
+        #print parts[0].split("|")
+        #print parts[1].split("|")
+        #print parts[1].split("|")[4]
         self.probeID = parts[0].split("|")[posProbeID-1]
-        self.origID = parts[0].split("|")[posIDorig-1]
+        self.origID = parts[1].split("|")[posIDorig-1]
         self.blastedID = parts[1].split("|")[posIDblasted-1]
         self.percOverlap = float(parts[2])
         self.bpOverlap = int(parts[3])
+        #print "\t".join([parts[0].split("|")[i-1] for i in infoOrig])
+        #print infoBlasted
+        #print "\t".join([parts[1].split("|")[i-1] for i in infoBlasted])
         self.info = "%s\t%s"%("\t".join([parts[0].split("|")[i-1] for i in infoOrig]), "\t".join([parts[1].split("|")[i-1] for i in infoBlasted]))
 
 

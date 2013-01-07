@@ -24,7 +24,7 @@ def analyzeSeqs(seqFile, outBlast, outNoHits, db_name, numThreads):
     if outNoHits:
         (fd, tmpIdfileName) = tempfile.mkstemp()
         print "Name of the tmp file for IDs:", tmpIdfileName
-        getIDs = "awk 'NR % 2 == 1{id=split($1,a,\">\");print a[2]}' " + seqFile + " | sort -k1,1 > " + tmpIdfileName
+        getIDs = "awk 'BEGIN{OFS=\"\\t\"}NR % 2 == 1{id=split($1,a,\">\");print a[2]}' " + seqFile + " | sed 's/ /_/g' | sort -k1,1 > " + tmpIdfileName
         print getIDs
         os.system(getIDs)
         getNoHits = "cut -f 1 %s | sort | uniq | comm -31 - %s > %s"%(outBlast,tmpIdfileName,outNoHits)

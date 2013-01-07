@@ -20,7 +20,7 @@ foreach my $slice (@slices){
 	my $genes = $slice->get_all_Genes();
 
 	foreach my $gene (@$genes) {
-	    
+
         if ($gene->biotype() ~~ @sRNAs_biotypes){
             printf( "%s\t%s\t%s\t%d\n", $gene->stable_id(),$gene->external_name(),$gene->biotype(),$gene->length());
         }
